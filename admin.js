@@ -95,6 +95,12 @@
     // セキュリティ
     setVal('input-new-passcode', currentConfig.admin?.passcode || 'azarin2026');
 
+    // GitHub連携情報の初期値ロード（localStorage優先、なければローカル資格情報）
+    const savedGhRepo = localStorage.getItem('AZARIN_GH_REPO') || window.GITHUB_LOCAL_CREDENTIALS?.repo_full || (window.GITHUB_LOCAL_CREDENTIALS ? `${window.GITHUB_LOCAL_CREDENTIALS.owner}/${window.GITHUB_LOCAL_CREDENTIALS.repo}` : 'azukiba1005/azarin-maintenance');
+    const savedGhToken = localStorage.getItem('AZARIN_GH_TOKEN') || window.GITHUB_LOCAL_CREDENTIALS?.token || '';
+    setVal('input-github-repo', savedGhRepo);
+    setVal('input-github-token', savedGhToken);
+
     // リンク一覧の描画
     renderLinkEditors();
   }
@@ -317,6 +323,161 @@
         });
         renderLinkEditors();
         syncPreview();
+      });
+    }
+
+    // トークン表示・非表示トグル
+    const toggleTokenBtn = document.getElementById('btn-toggle-token');
+    const tokenInput = document.getElementById('input-github-token');
+    if (toggleTokenBtn && tokenInput) {
+      toggleTokenBtn.addEventListener('click', () => {
+        if (tokenInput.type === 'password') {
+          tokenInput.type = 'text';
+          toggleTokenBtn.textContent = '隠す';
+        } else {
+          tokenInput.type = 'password';
+          toggleTokenBtn.textContent = '表示';
+        }
+      });
+    }
+
+    // 🚀 「保存してGitHubに自動デプロイ」
+    const deployGhBtn = document.getElementById('btn-deploy-github');
+    const deployStatusBox = document.getElementById('deploy-status-box');
+    const deployBtnText = document.getElementById('deploy-btn-text');
+
+    if (deployGhBtn) {
+      deployGhBtn.addEventListener('click', async () => {
+        collectFormData();
+
+        const repo = (getVal('input-github-repo') || '').trim();
+        const token = (getVal('input-github-token') || '').trim();
+
+        if (!token) {
+          alert('GitHub Personal Access Tokenを入力してください。\n（※ repo 権限のあるトークンが必要です）');
+          return;
+        }
+
+        if (!repo || !repo.includes('/')) {
+          alert('リポジトリ名を 正しい形式 (例: azukiba1005/azarin-maintenance) で入力してください。');
+          return;
+        }
+
+        // トークンとリポジトリをブラウザに保持
+        try {
+          localStorage.setItem('AZARIN_GH_REPO', repo);
+          localStorage.setItem('AZARIN_GH_TOKEN', token);
+          localStorage.setItem('AZARIN_SITE_CONFIG', JSON.stringify(currentConfig));
+        } catch (e) {}
+
+        // UIをデプロイ中状態に
+        deployGhBtn.disabled = true;
+        deployBtnText.innerHTML = '<span class="deploy-spinner"></span> GitHubへデプロイ中...';
+        if (deployStatusBox) {
+          deployStatusBox.className = 'deploy-status-box show';
+          deployStatusBox.innerHTML = '🔄 <strong>デプロイ準備中:</strong> 最新のリポジトリ情報を取得しています...';
+        }
+
+        try {
+          // 1. 最新の config.js ファイル内容を生成
+          const fileContent = `/**
+ * azarin.me 工事中案内 サイト設定ファイル (Exported Config)
+ * 生成日時: ${new Date().toLocaleString('ja-JP')}
+ */
+window.DEFAULT_SITE_CONFIG = ${JSON.stringify(currentConfig, null, 2)};
+
+(function() {
+  try {
+    const saved = localStorage.getItem("AZARIN_SITE_CONFIG");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      window.SITE_CONFIG = Object.assign({}, window.DEFAULT_SITE_CONFIG, parsed);
+      return;
+    }
+  } catch (e) {}
+  window.SITE_CONFIG = JSON.parse(JSON.stringify(window.DEFAULT_SITE_CONFIG));
+})();
+`;
+
+          // UTF-8対応のBase64エンコード
+          const base64Content = btoa(encodeURIComponent(fileContent).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+            return String.fromCharCode(parseInt(p1, 16));
+          }));
+
+          // 2. 現在の config.js の SHA を取得
+          if (deployStatusBox) {
+            deployStatusBox.innerHTML = '🔄 <strong>ステップ 1/2:</strong> 現在のファイル状態を確認中...';
+          }
+          const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/config.js`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+
+          let currentSha = null;
+          if (getRes.ok) {
+            const fileData = await getRes.json();
+            currentSha = fileData.sha;
+          }
+
+          // 3. GitHub Contents API でコミット & プッシュ
+          if (deployStatusBox) {
+            deployStatusBox.innerHTML = '🔄 <strong>ステップ 2/2:</strong> GitHubにコミットしてPagesへ反映中...';
+          }
+          const putBody = {
+            message: `Update site config via Admin Console (${new Date().toLocaleTimeString('ja-JP')})`,
+            content: base64Content,
+            branch: 'main'
+          };
+          if (currentSha) putBody.sha = currentSha;
+
+          const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/config.js`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(putBody)
+          });
+
+          if (!putRes.ok) {
+            const errData = await putRes.json().catch(() => ({}));
+            throw new Error(errData.message || `HTTP ${putRes.status}`);
+          }
+
+          const result = await putRes.json();
+          const commitUrl = result.commit?.html_url || `https://github.com/${repo}/commits/main`;
+          const pagesUrl = `https://${repo.split('/')[0]}.github.io/${repo.split('/')[1]}/`;
+
+          // 成功UI
+          if (deployStatusBox) {
+            deployStatusBox.className = 'deploy-status-box show success';
+            deployStatusBox.innerHTML = `
+              🎉 <strong>GitHubへの自動デプロイが完了しました！</strong><br>
+              ・コミット: <a href="${commitUrl}" target="_blank" rel="noopener noreferrer">コミット履歴を確認 ↗</a><br>
+              ・公開サイト: <a href="${pagesUrl}" target="_blank" rel="noopener noreferrer">${pagesUrl} ↗</a><br>
+              <span style="font-size: 0.78rem; opacity: 0.85;">※ GitHub Pagesのキャッシュ反映により、本番URLへの完全反映に約30秒〜1分ほどかかる場合があります。</span>
+            `;
+          }
+
+          showToast('GitHubに自動デプロイしました！');
+          syncPreview();
+
+        } catch (err) {
+          console.error(err);
+          if (deployStatusBox) {
+            deployStatusBox.className = 'deploy-status-box show error';
+            deployStatusBox.innerHTML = `
+              ❌ <strong>デプロイに失敗しました:</strong> ${escapeHTML(err.message)}<br>
+              ・リポジトリ名とアクセストークンの権限（repo権限）をご確認ください。
+            `;
+          }
+        } finally {
+          deployGhBtn.disabled = false;
+          deployBtnText.textContent = '保存してGitHubに自動デプロイ';
+        }
       });
     }
 
