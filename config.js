@@ -1,10 +1,10 @@
 /**
  * azarin.me 工事中案内 サイト設定ファイル (Exported Config)
- * 生成日時: 2026/9/23 13:42:03
+ * 生成日時: 2026/9/23 19:22:27
  */
 window.DEFAULT_SITE_CONFIG = {
   "site": {
-    "title": "あざりん | サイトリニューアル工事中",
+    "title": "あざりん | サイトリニューアル工事中 (テスト中)",
     "brandName": "AZARIN",
     "brandSub": "@azarin · YouTube Creator",
     "avatarInitial": "あ",
@@ -17,9 +17,9 @@ window.DEFAULT_SITE_CONFIG = {
   },
   "maintenance": {
     "isActive": true,
-    "badgeText": "UNDER CONSTRUCTION · リニューアル工事中",
+    "badgeText": "UNDER CONSTRUCTION · リニューアル工事中 ",
     "badgeType": "warning",
-    "heading": "ただいまWEBサイトの\nリニューアル工事を行っています",
+    "heading": "リニューアル工事の画面を作成中です。実際にはこのようなリニューアル工事はしておりません",
     "description": "いつも「あざりん」を応援いただきありがとうございます。\n現在、より見やすく、快適に最新ガジェット情報やコンテンツをお届けできるよう、全面的なシステムおよびデザインのリニューアルを実施しております。\n公開まで今しばらくお待ちくださいますようお願い申し上げます。",
     "showProgress": true,
     "progressPercent": 78,
@@ -29,7 +29,7 @@ window.DEFAULT_SITE_CONFIG = {
     "enabled": true,
     "label": "REOPENING COUNTDOWN",
     "subLabel": "リニューアル公開予定",
-    "targetDate": "2026-10-14T15:00:00.000Z",
+    "targetDate": "2026-10-14T06:00:00.000Z",
     "expiredMessage": "まもなく公開予定です！最新情報はSNSでお知らせします。"
   },
   "contact": {
@@ -117,6 +117,16 @@ window.DEFAULT_SITE_CONFIG = {
       "desc": "音声配信・ラジオトーク",
       "tag": "Audio",
       "icon": "podcast",
+      "enabled": true,
+      "featured": false
+    },
+    {
+      "id": "link_1790158924037",
+      "title": "公式ウェブサイト",
+      "url": "https://azarin.me",
+      "desc": "ウェブサイト",
+      "tag": "Official",
+      "icon": "link",
       "enabled": true,
       "featured": false
     }
