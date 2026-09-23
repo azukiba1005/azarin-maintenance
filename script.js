@@ -246,6 +246,22 @@
       .replace(/\n/g, '<br>');
   }
 
+  // 外部からの動的更新API（管理画面リアルタイム連動用）
+  window.updateSiteConfig = function(newConfig) {
+    if (!newConfig) return;
+    for (let key in newConfig) {
+      config[key] = newConfig[key];
+    }
+    renderSite();
+  };
+
+  // postMessage 受信によるリアルタイム更新
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'AZARIN_CONFIG_UPDATE' && event.data.config) {
+      window.updateSiteConfig(event.data.config);
+    }
+  });
+
   // 実行
   document.addEventListener('DOMContentLoaded', () => {
     initTheme();

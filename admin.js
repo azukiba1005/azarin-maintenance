@@ -265,19 +265,32 @@
     return el ? el.checked : false;
   }
 
-  // 6. プレビューのリアルタイム更新
+  // 6. プレビューのリアルタイム更新（チラつきゼロ＆高速シームレス更新）
+  let syncDebounceTimer = null;
   function syncPreview() {
     if (!previewIframe || !previewIframe.contentWindow) return;
+    
+    const configCopy = JSON.parse(JSON.stringify(currentConfig));
+
+    // 即時反映: iframe内の updateSiteConfig を直接呼び出し、または postMessage 送信
     try {
-      // プレビューのiframe内のSITE_CONFIGを更新してリロードまたは再描画
-      previewIframe.contentWindow.SITE_CONFIG = JSON.parse(JSON.stringify(currentConfig));
-      if (typeof previewIframe.contentWindow.location?.reload === 'function') {
-        // 設定をiframeのローカルストレージにも渡す
-        previewIframe.contentWindow.localStorage?.setItem('AZARIN_SITE_CONFIG', JSON.stringify(currentConfig));
-        previewIframe.contentWindow.location.reload();
+      if (typeof previewIframe.contentWindow.updateSiteConfig === 'function') {
+        previewIframe.contentWindow.updateSiteConfig(configCopy);
+        return;
       }
+      previewIframe.contentWindow.postMessage({
+        type: 'AZARIN_CONFIG_UPDATE',
+        config: configCopy
+      }, '*');
     } catch (e) {
-      console.warn('プレビュー更新エラー:', e);
+      // クロスオリジン等で直接呼べない場合はデバウンスをかけてリロード
+      clearTimeout(syncDebounceTimer);
+      syncDebounceTimer = setTimeout(() => {
+        try {
+          previewIframe.contentWindow.localStorage?.setItem('AZARIN_SITE_CONFIG', JSON.stringify(configCopy));
+          previewIframe.contentWindow.location.reload();
+        } catch (err) {}
+      }, 500);
     }
   }
 

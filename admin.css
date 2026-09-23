@@ -151,31 +151,41 @@ body {
 }
 
 /* ========================================================
-   Admin Layout
+   Admin Layout (Left: Editor, Right: Preview)
    ======================================================== */
 .admin-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
-@media (max-width: 1024px) {
-  .admin-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Main Form Area */
+/* Main Form Area (Left) */
 .admin-editor {
-  padding: 2rem 2.5rem;
+  flex: 1 1 52%;
+  width: 52%;
+  min-width: 360px;
+  height: 100vh;
   overflow-y: auto;
-  max-height: 100vh;
+  overflow-x: hidden;
+  padding: 2rem 2.25rem 4rem;
   border-right: 1px solid var(--admin-border);
+  box-sizing: border-box;
+  background-color: var(--admin-bg);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column !important;
+  }
   .admin-editor {
-    padding: 1.5rem 1rem;
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    padding: 1.25rem 1rem 3rem;
   }
 }
 
@@ -521,13 +531,25 @@ input:checked + .slider:before {
    Preview Area (Right Half)
    ======================================================== */
 .admin-preview {
+  flex: 1 1 48%;
+  width: 48%;
+  min-width: 360px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #000;
-  height: 100vh;
-  position: sticky;
-  top: 0;
+  background: #05080e;
   overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .admin-preview {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 100%;
+    height: 75vh;
+  }
 }
 
 .preview-toolbar {
