@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-5SWCCXNL');</script>
+  <!-- End Google Tag Manager -->
+  <script>
+    (function () {
+      let savedTheme = 'dark';
+      try {
+        savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      } catch (e) {
+        console.warn('localStorageへのアクセスが制限されています。デフォルトテーマを適用します。', e);
+      }
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>あざりん</title>
+  <meta name="description" content="あざりん - ガジェット系YouTuber。最新ガジェット情報やレビューを落ち着いた関西弁でわかりやすく解説。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="style.css" rel="stylesheet" type="text/css">
+  <link rel="alternate" type="application/rss+xml" title="あざりん - お知らせ RSS Feed" href="notice/feed.xml">
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5SWCCXNL" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div class="container">
+    <!-- NAV -->
+    <nav>
+      <a href="index.html" class="nav-logo">AZARIN</a>
+      <div class="nav-links">
+        <a href="blog/index.html">ブログ</a>
+        <a href="device/index.html">デバイス</a>
+        <a href="https://www.3zat.work/podcast/index.html" target="_blank" rel="noopener noreferrer">ポッドキャスト ↗</a>
+        <a href="notice/index.html">お知らせ</a>
+        <a href="work/index.html">実績</a>
+        <a href="inquiry/index.html">お問い合わせ</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="avatar">あ</div>
+      <div>
+        <h1 class="hero-name">あざりん</h1>
+        <p class="hero-handle">@azarin · YouTube Creator</p>
+        <div class="tag-row">
+          <span class="tag">ガジェット</span>
+          <span class="tag">雑談</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

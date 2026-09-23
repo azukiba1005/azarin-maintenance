@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AZARIN 管理コンソール | 工事中案内サイト管理</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+  <!-- 認証オーバーレイ（パスコード保護） -->
+  <div class="auth-overlay" id="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h1 class="auth-title">管理者認証</h1>
+      <p class="auth-desc">工事中案内サイトの管理パネルです。<br>パスコードを入力してログインしてください。</p>
+
+      <div class="auth-input-group">
+        <label for="auth-passcode">管理者パスコード</label>
+        <input type="password" id="auth-passcode" class="auth-input" placeholder="パスコードを入力" autofocus>
+        <div class="auth-error" id="auth-error">パスコードが違います。もう一度お試しください。</div>
+      </div>
+
+      <button type="button" class="btn-admin btn-admin-primary" id="auth-submit-btn" style="width: 100%; padding: 0.8rem;">
+        認証して管理画面を開く
+      </button>
+
+      <p class="auth-hint">※ 初期パスコード: <code>azarin2026</code> (管理画面内で変更可能)</p>
+    </div>
+  </div>
+
+  <!-- 管理画面メインレイアウト -->
+  <div class="admin-layout">
+
+    <!-- 左カラム: 設定エディター -->
+    <div class="admin-editor">
+
+      <!-- トップバー -->
+      <div class="admin-topbar">
+        <div class="admin-branding">
+          <span class="admin-logo-badge">AZARIN</span>
+          <h2 class="admin-page-title">工事案内 サイト管理パネル</h2>
+        </div>
+        <div class="admin-top-actions">
+          <a href="index.html" target="_blank" class="btn-admin btn-admin-secondary" title="別タブでサイトを確認">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            サイトを開く ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- ① サイト基本情報 -->
+      <section class="form-section">
+        <div class="section-title-wrap">
+          <h3 class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            サイト基本情報
+          </h3>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-site-title">ページタイトル (HTML title)</label>
+          <input type="text" id="input-site-title" class="form-input">
+        </div>
+
+        <div class="form-group" style="display: grid; grid-template-columns: 80px 1fr; gap: 0.75rem;">
+          <div>
+            <label class="form-label" for="input-brand-avatar">アバター文字</label>
+            <input type="text" id="input-brand-avatar" class="form-input" style="text-align: center; font-weight: 700;">
+          </div>
+          <div>
+            <label class="form-label" for="input-brand-name">ブランド名 / チャンネル名</label>
+            <input type="text" id="input-brand-name" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-brand-sub">サブ肩書き</label>
+          <input type="text" id="input-brand-sub" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-tags">表示タグ (カンマ区切り)</label>
+          <input type="text" id="input-tags" class="form-input">
+          <p class="form-hint">例: ガジェット, YouTube, サイトリニューアル中</p>
+        </div>
+      </section>
+
+      <!-- ② 工事案内ステータス & 進捗 -->
+      <section class="form-section">
+        <div class="section-title-wrap">
+          <h3 class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+            </svg>
+            工事中ステータス & メッセージ
+          </h3>
+          <div class="toggle-switch-wrap" style="padding: 0;">
+            <label class="switch">
+              <input type="checkbox" id="check-maint-active">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 140px; gap: 0.75rem;">
+          <div>
+            <label class="form-label" for="input-badge-text">ステータスバッジ文言</label>
+            <input type="text" id="input-badge-text" class="form-input">
+          </div>
+          <div>
+            <label class="form-label" for="select-badge-type">バッジ配色</label>
+            <select id="select-badge-type" class="form-select">
+              <option value="warning">アンバー (注意/工事)</option>
+              <option value="info">シアン (情報/案内)</option>
+              <option value="success">エメラルド (準備完了間近)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-hero-heading">メイン見出し (改行で2行表示)</label>
+          <textarea id="input-hero-heading" class="form-textarea" style="min-height: 60px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-hero-desc">案内メッセージ説明文</label>
+          <textarea id="input-hero-desc" class="form-textarea" style="min-height: 100px;"></textarea>
+        </div>
+
+        <!-- 進捗バー設定 -->
+        <div style="padding-top: 1rem; border-top: 1px dashed var(--admin-border);">
+          <div class="toggle-switch-wrap">
+            <div>
+              <div class="toggle-switch-label">進捗バーを表示する</div>
+              <div class="toggle-switch-desc">現在の工事の進行割合を視覚的にアピール</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="check-show-progress">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group" style="margin-top: 0.75rem;">
+            <label class="form-label">進捗率 (%)</label>
+            <div class="range-wrap">
+              <input type="range" id="range-progress" class="range-input" min="0" max="100" step="1">
+              <input type="number" id="input-progress-val" class="form-input" style="width: 75px; text-align: right;" min="0" max="100">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-progress-label">進捗ラベル</label>
+            <input type="text" id="input-progress-label" class="form-input">
+          </div>
+        </div>
+      </section>
+
+      <!-- ③ カウントダウンタイマー設定 -->
+      <section class="form-section">
+        <div class="section-title-wrap">
+          <h3 class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            リニューアル公開カウントダウン
+          </h3>
+          <label class="switch">
+            <input type="checkbox" id="check-countdown-enable">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-countdown-date">公開予定日時 (Target Date)</label>
+          <input type="datetime-local" id="input-countdown-date" class="form-input">
+          <p class="form-hint">指定した日時に向けて日・時・分・秒がリアルタイムで減算されます。</p>
+        </div>
+
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div>
+            <label class="form-label" for="input-countdown-label">上部英語ラベル</label>
+            <input type="text" id="input-countdown-label" class="form-input">
+          </div>
+          <div>
+            <label class="form-label" for="input-countdown-sublabel">サブ日本語見出し</label>
+            <input type="text" id="input-countdown-sublabel" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-countdown-expired">期日到来後の完了メッセージ</label>
+          <input type="text" id="input-countdown-expired" class="form-input">
+        </div>
+      </section>
+
+      <!-- ④ お問い合わせ設定 -->
+      <section class="form-section">
+        <div class="section-title-wrap">
+          <h3 class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            お仕事・お問い合わせ窓口
+          </h3>
+          <label class="switch">
+            <input type="checkbox" id="check-contact-enable">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-contact-title">見出し</label>
+          <input type="text" id="input-contact-title" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-contact-desc">説明文</label>
+          <textarea id="input-contact-desc" class="form-textarea" style="min-height: 70px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-contact-email">連絡先メールアドレス</label>
+          <input type="email" id="input-contact-email" class="form-input" style="font-family: var(--font-mono);">
+        </div>
+      </section>
+
+      <!-- ⑤ 各種リンク & SNS管理 -->
+      <section class="form-section">
+        <div class="section-title-wrap">
+          <h3 class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            各種チャンネル & SNSリンク管理
+          </h3>
+          <button type="button" class="btn-admin btn-admin-secondary" id="btn-add-link" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+            ＋ リンク追加
+          </button>
+        </div>
+
+        <div class="links-editor-list" id="links-editor-list">
+          <!-- admin.js で動的に生成 -->
+        </div>
+      </section>
+
+      <!-- ⑥ 管理者パスコード変更 -->
+      <section class="form-section">
+        <div class="section-title-wrap">
+          <h3 class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            管理者パスコード設定
+          </h3>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-new-passcode">ログインパスコード</label>
+          <input type="text" id="input-new-passcode" class="form-input" style="font-family: var(--font-mono);">
+          <p class="form-hint">次回以降の管理画面ログイン時に使用するパスコードです。</p>
+        </div>
+      </section>
+
+      <!-- ⑦ データ保存 & 本番用書き出し -->
+      <section class="form-section" style="background: rgba(30, 41, 59, 0.4); border-color: var(--accent-cyan);">
+        <div class="section-title-wrap">
+          <h3 class="sec-title" style="color: var(--accent-cyan);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            保存 ＆ 本番サーバーへの反映方法
+          </h3>
+        </div>
+
+        <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;">
+          <p style="margin-bottom: 0.5rem;">
+            <strong style="color: var(--text-main);">① ブラウザに即時保存:</strong><br>
+            現在のブラウザの <code>localStorage</code> に保存され、この端末でのプレビューや確認がすぐに反映されます。
+          </p>
+          <p>
+            <strong style="color: var(--text-main);">② 本番サーバーに反映する場合:</strong><br>
+            「<strong>config.js をダウンロード</strong>」をクリックし、ダウンロードされた <code>config.js</code> をこのフォルダ（またはサーバー上）の <code>config.js</code> に上書き保存してください。
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button type="button" class="btn-admin btn-admin-primary" id="btn-save-local">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            ブラウザに保存（即時反映）
+          </button>
+
+          <button type="button" class="btn-admin btn-admin-success" id="btn-download-config">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            config.js をダウンロード
+          </button>
+
+          <button type="button" class="btn-admin btn-admin-danger" id="btn-reset-default" style="margin-left: auto;">
+            初期設定に戻す
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 右カラム: リアルタイム ライブプレビュー -->
+    <div class="admin-preview">
+      <div class="preview-toolbar">
+        <div class="preview-title">
+          <span>LIVE PREVIEW</span>
+          <span class="preview-badge">リアルタイム連動中</span>
+        </div>
+        <div class="preview-device-toggle">
+          <button type="button" class="device-btn active" data-device="desktop" title="PC表示">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </button>
+          <button type="button" class="device-btn" data-device="tablet" title="タブレット表示">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+          </button>
+          <button type="button" class="device-btn" data-device="mobile" title="スマホ表示">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-frame-wrap">
+        <iframe src="index.html" class="preview-iframe" id="preview-iframe" title="プレビュー画面"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- トースト通知 -->
+  <div class="admin-toast" id="admin-toast">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="admin-toast-text">保存しました</span>
+  </div>
+
+  <!-- 設定読み込み ＆ 管理画面スクリプト -->
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+
+</html>
