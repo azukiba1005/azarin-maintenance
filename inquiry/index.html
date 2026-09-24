@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-5SWCCXNL');</script>
+    <!-- End Google Tag Manager -->
+    <script>
+        (function () {
+            let savedTheme = 'dark';
+            try {
+                savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+            } catch (e) {
+                console.warn('localStorageへのアクセスが制限されています。デフォルトテーマを適用します。', e);
+            }
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>お問い合わせ-あざりん</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link href="style.css?v=20260924" rel="stylesheet" type="text/css">
+    <style>
+        /* ── INQUIRY CONFIRMATION MODAL GUARANTEED STYLES ── */
+        #confirm-modal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(0, 0, 0, 0.78) !important;
+            backdrop-filter: saturate(180%) blur(20px) !important;
+            -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+            z-index: 99999 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 1rem !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.25s ease-out !important;
+        }
+
+        #confirm-modal.active {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        #confirm-modal .inquiry-confirm-modal {
+            max-width: 600px !important;
+            width: 94% !important;
+            max-height: 88vh !important;
+            max-height: 88dvh !important;
+            display: flex !important;
+            flex-direction: column !important;
+            background: var(--bg-solid, #13151c) !important;
+            border: 1px solid var(--border2, rgba(255, 255, 255, 0.15)) !important;
+            border-radius: var(--radius-xl, 24px) !important;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65), 0 0 45px rgba(0, 113, 227, 0.25) !important;
+            transform: translateY(16px) scale(0.97) !important;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            overflow: hidden !important;
+            margin: auto !important;
+        }
+
+        #confirm-modal.active .inquiry-confirm-modal {
+            transform: translateY(0) scale(1) !important;
+        }
+
+        #confirm-modal .modal-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 1.2rem 1.6rem !important;
+            border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08)) !important;
+            background: var(--bg-solid, #13151c) !important;
+        }
+
+        #confirm-modal .modal-title {
+            font-size: 15.5px !important;
+            font-weight: 700 !important;
+            color: var(--text, #f8fafc) !important;
+            letter-spacing: -0.01em !important;
+        }
+
+        #confirm-modal .confirm-modal-body {
+            padding: 1.5rem 1.6rem !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            flex: 1 1 auto !important;
+            background: var(--bg-solid, #13151c) !important;
+        }
+
+        #confirm-modal .confirm-intro-text {
+            font-size: 13.5px !important;
+            color: var(--text-secondary, rgba(248, 250, 252, 0.65)) !important;
+            margin-bottom: 1.4rem !important;
+            line-height: 1.6 !important;
+        }
+
+        #confirm-modal .confirm-preview-list {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1.2rem !important;
+        }
+
+        #confirm-modal .confirm-item {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+        }
+
+        #confirm-modal .confirm-label {
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            color: var(--accent, #0071e3) !important;
+            letter-spacing: 0.05em !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            text-transform: uppercase !important;
+        }
+
+        #confirm-modal .confirm-value {
+            font-size: 14.5px !important;
+            color: var(--text, #f8fafc) !important;
+            background: var(--bg3, rgba(32, 36, 50, 0.6)) !important;
+            padding: 11px 15px !important;
+            border-radius: var(--radius-sm, 12px) !important;
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.08)) !important;
+            overflow-wrap: break-word !important;
+            word-break: break-word !important;
+            white-space: pre-wrap !important;
+            line-height: 1.6 !important;
+        }
+
+        #confirm-modal .confirm-value.preview-message-box {
+            min-height: 100px !important;
+            max-height: 200px !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        #confirm-modal .confirm-modal-footer {
+            padding: 1.15rem 1.6rem !important;
+            border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08)) !important;
+            display: flex !important;
+            gap: 12px !important;
+            justify-content: flex-end !important;
+            background: var(--bg-solid, #13151c) !important;
+        }
+
+        #confirm-modal .confirm-modal-footer .modal-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 13.5px !important;
+            font-weight: 600 !important;
+            padding: 10px 20px !important;
+            border-radius: var(--radius-sm, 12px) !important;
+            border: 1px solid var(--border2, rgba(255, 255, 255, 0.18)) !important;
+            background: var(--bg3, rgba(32, 36, 50, 0.6)) !important;
+            color: var(--text, #f8fafc) !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            min-height: 42px !important;
+        }
+
+        #confirm-modal .confirm-modal-footer .modal-btn.primary {
+            background: linear-gradient(135deg, #0071e3 0%, #38bdf8 100%) !important;
+            border: none !important;
+            color: #fff !important;
+            box-shadow: 0 4px 16px rgba(0, 113, 227, 0.35) !important;
+        }
+
+        #confirm-modal .confirm-modal-footer .modal-btn.primary:hover {
+            box-shadow: 0 6px 24px rgba(0, 113, 227, 0.5) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        @media (max-width: 768px) {
+            #confirm-modal .inquiry-confirm-modal {
+                width: 95% !important;
+                max-height: 86dvh !important;
+                border-radius: var(--radius-lg, 18px) !important;
+            }
+
+            #confirm-modal .confirm-modal-body {
+                padding: 1.2rem 1.15rem !important;
+            }
+
+            #confirm-modal .confirm-modal-footer {
+                padding: 1rem 1.15rem !important;
+                flex-direction: column-reverse !important;
+                gap: 9px !important;
+            }
+
+            #confirm-modal .confirm-modal-footer .modal-btn {
+                width: 100% !important;
+                min-height: 46px !important;
+            }
+        }
+
+        /* ── LIQUID GLASS DOCK & TABS ── */
+        .liquid-glass-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .liquid-glass-dock {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(22, 25, 35, 0.65);
+            backdrop-filter: blur(28px) saturate(200%);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 9999px;
+            padding: 5px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 0 25px rgba(0, 113, 227, 0.15);
+            max-width: 100%;
+        }
+
+        [data-theme="light"] .liquid-glass-dock {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.95), 0 0 20px rgba(0, 113, 227, 0.08);
+        }
+
+        .liquid-indicator {
+            position: absolute;
+            top: 5px;
+            bottom: 5px;
+            left: 5px;
+            width: calc(50% - 5px);
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #0071e3 0%, #38bdf8 100%);
+            box-shadow: 0 4px 16px rgba(0, 113, 227, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .liquid-indicator::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 15%;
+            right: 15%;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 9999px;
+        }
+
+        .liquid-tab {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary, rgba(248, 250, 252, 0.7));
+            font-size: 14.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 9999px;
+            transition: color 0.25s ease, transform 0.15s ease;
+            white-space: nowrap;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .liquid-tab:hover {
+            color: var(--text, #f8fafc);
+        }
+
+        .liquid-tab.active {
+            color: #ffffff !important;
+            font-weight: 700;
+        }
+
+        .liquid-tab .tab-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+        }
+
+        .liquid-tab .tab-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        .liquid-tab .tab-badge {
+            font-size: 10.5px;
+            padding: 2px 7px;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        [data-theme="light"] .liquid-tab:not(.active) {
+            color: var(--text-secondary, #475569);
+        }
+
+        .liquid-scroll-indicator-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+            font-size: 12.5px;
+            color: var(--text-tertiary, rgba(248, 250, 252, 0.5));
+            user-select: none;
+        }
+
+        .liquid-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .liquid-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 9999px;
+            background: var(--border2, rgba(255, 255, 255, 0.2));
+            transition: all 0.3s ease;
+        }
+
+        .liquid-dot.active {
+            width: 18px;
+            background: var(--accent, #0071e3);
+            box-shadow: 0 0 8px rgba(0, 113, 227, 0.6);
+        }
+
+        /* ── HORIZONTAL SCROLL VIEWPORT & TRACK ── */
+        .inquiry-viewport {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            position: relative;
+            padding: 4px 0 16px 0;
+        }
+
+        .inquiry-viewport::-webkit-scrollbar {
+            display: none;
+        }
+
+        .inquiry-track {
+            display: flex;
+            width: 200%;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .inquiry-panel {
+            flex: 0 0 50%;
+            width: 50%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            box-sizing: border-box;
+            padding: 0 4px;
+        }
+
+        /* ── LIQUID GLASS INQUIRY CARD ── */
+        .liquid-card {
+            background: var(--bg2, rgba(22, 25, 35, 0.75));
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--border2, rgba(255, 255, 255, 0.15));
+            border-radius: var(--radius-xl, 24px);
+            padding: 2.2rem;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .liquid-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .liquid-card-header {
+            margin-bottom: 1.8rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+        }
+
+        .liquid-card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent, #0071e3);
+            background: rgba(0, 113, 227, 0.1);
+            border: 1px solid rgba(0, 113, 227, 0.25);
+            padding: 4px 10px;
+            border-radius: 9999px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .liquid-card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text, #f8fafc);
+            letter-spacing: -0.02em;
+            margin: 0 0 6px 0;
+        }
+
+        .liquid-card-desc {
+            font-size: 13.5px;
+            color: var(--text-secondary, rgba(248, 250, 252, 0.65));
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ── SWITCH HELPER PROMPT AT CARD BOTTOM ── */
+        .card-switch-footer {
+            margin-top: 1.8rem;
+            padding-top: 1.2rem;
+            border-top: 1px dashed var(--border, rgba(255, 255, 255, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-tertiary, rgba(248, 250, 252, 0.5));
+        }
+
+        .card-switch-link {
+            background: none;
+            border: none;
+            color: var(--accent, #0071e3);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .card-switch-link:hover {
+            background: rgba(0, 113, 227, 0.1);
+            color: var(--accent-hover, #38bdf8);
+        }
+
+        @media (max-width: 640px) {
+            .liquid-card {
+                padding: 1.5rem 1.25rem;
+                border-radius: var(--radius-lg, 18px);
+            }
+
+            .liquid-tab {
+                padding: 8px 16px;
+                font-size: 13.5px;
+            }
+
+            .liquid-tab .tab-badge {
+                display: none;
+            }
+
+            .card-switch-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5SWCCXNL" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div class="container">
+
+        <!-- ナビゲーションバー -->
+        <header>
+            <nav class="site-nav">
+                <a href="../index.html" class="nav-brand">
+                    <div class="brand-avatar" id="brand-avatar">あ</div>
+                    <div class="brand-info">
+                        <span class="brand-name" id="brand-name">AZARIN</span>
+                        <span class="brand-sub" id="brand-sub">@azarin · YouTube Creator</span>
+                    </div>
+                </a>
+
+                <div class="nav-actions">
+                    <!-- テーマ切り替えボタン -->
+                    <button type="button" id="theme-toggle-btn" class="theme-btn" aria-label="ダーク/ライトモード切り替え" title="テーマ切り替え">
+                        <svg class="sun-icon" viewBox="0 0 24 24">
+                            <path
+                                d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zm11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.01c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" />
+                        </svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24">
+                            <path
+                                d="M12.3 22h-.1c-5.5 0-10-4.5-10-10 0-4.8 3.5-8.9 8.2-9.8.6-.1 1.2.3 1.3.9.1.6-.3 1.2-.9 1.3-3.7.7-6.4 4-6.4 7.8 0 4.4 3.6 8 8 8 3.8 0 7.1-2.7 7.8-6.4.1-.6.7-1 1.3-.9.6.1 1 .7.9 1.3-.9 4.7-5 8.2-9.8 8.2z" />
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- INQUIRY -->
+        <section id="inquiry" class="inquiry-section">
+            <p class="section-title">お問い合わせ</p>
+
+            <!-- LIQUID GLASS CATEGORY SWITCHER -->
+            <div class="liquid-glass-container">
+                <div class="liquid-glass-dock" role="tablist" aria-label="お問い合わせ区分の選択">
+                    <div class="liquid-indicator" id="liquid-indicator"></div>
+                    <button type="button" class="liquid-tab active" id="tab-business" role="tab" aria-selected="true"
+                        aria-controls="panel-business" data-target="business">
+                        <span class="tab-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
+                            </svg>
+                        </span>
+                        <span>企業・法人様</span>
+                        <span class="tab-badge">Business</span>
+                    </button>
+                    <button type="button" class="liquid-tab" id="tab-personal" role="tab" aria-selected="false"
+                        aria-controls="panel-personal" data-target="personal">
+                        <span class="tab-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                        </span>
+                        <span>個人のお客様</span>
+                        <span class="tab-badge">Personal</span>
+                    </button>
+                </div>
+                <div class="liquid-scroll-indicator-bar">
+                    <span>左右にスクロール・スワイプして切り替え</span>
+                    <div class="liquid-dots">
+                        <span class="liquid-dot active" id="dot-business"></span>
+                        <span class="liquid-dot" id="dot-personal"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORM & HORIZONTAL SCROLL TRACK -->
+            <form action="https://ssgform.com/s/Y5I3U1Yx2y7j" method="post" class="inquiry-form-multi" id="inquiry-form"
+                novalidate>
+                <!-- reCAPTCHA v3 Token -->
+                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                <!-- お問い合わせ区分 (企業・法人様 or 個人のお客様) -->
+                <input type="hidden" name="お問い合わせ区分" id="inquiry-category-input" value="企業・法人様">
+
+                <div class="inquiry-viewport" id="inquiry-viewport">
+                    <div class="inquiry-track" id="inquiry-track">
+
+                        <!-- PANEL 1: 企業・法人様 (BUSINESS) -->
+                        <div class="inquiry-panel" id="panel-business" role="tabpanel" aria-labelledby="tab-business">
+                            <div class="liquid-card">
+                                <div class="liquid-card-header">
+                                    <div class="liquid-card-badge">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 7V3H2v18h20V7H12z" />
+                                        </svg>
+                                        Business & Collaboration
+                                    </div>
+                                    <h3 class="liquid-card-title">企業・法人様 お問い合わせ</h3>
+                                    <p class="liquid-card-desc">製品レビュー、PRタイアップ、動画制作・執筆、取材・登壇などのビジネスに関するお問い合わせはこちらから承ります。
+                                    </p>
+                                </div>
+
+                                <div class="inquiry-form">
+                                    <div class="form-group">
+                                        <label for="biz-company">
+                                            貴社名・屋号・組織名
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <input type="text" id="biz-company" name="貴社名・組織名" placeholder="例: 株式会社〇〇"
+                                            required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="biz-name">
+                                            ご担当者名
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <input type="text" id="biz-name" name="ご担当者名" placeholder="例: 山田 太郎" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="biz-email">
+                                            メールアドレス
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <input type="email" id="biz-email" name="メールアドレス"
+                                            placeholder="例: contact@azarin.me" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="biz-type">
+                                            ご相談の種類
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <select id="biz-type" name="ご相談の種類" required>
+                                            <option value="" disabled selected>選択してください</option>
+                                            <option value="製品レビュー・タイアップのご相談">製品レビュー・タイアップのご相談</option>
+                                            <option value="お仕事・制作・執筆のご依頼">お仕事・制作・執筆のご依頼</option>
+                                            <option value="コラボレーションのご提案">コラボレーションのご提案</option>
+                                            <option value="取材・登壇・メディア掲載">取材・登壇・メディア掲載</option>
+                                            <option value="その他（ビジネス）">その他（ビジネス）</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="biz-url">
+                                            貴社ウェブサイトURL（任意）
+                                        </label>
+                                        <input type="url" id="biz-url" name="貴社ウェブサイトURL"
+                                            placeholder="https://azarin.me">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="biz-budget">
+                                            ご予算感・希望納期（任意）
+                                        </label>
+                                        <input type="text" id="biz-budget" name="ご予算感・希望納期"
+                                            placeholder="例: 納期: 来月末頃 / 予算: 応相談">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="biz-message">
+                                            お問い合わせ内容
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <textarea id="biz-message" name="お問い合わせ内容" required
+                                            placeholder="案件の概要、対象製品・サービス、スケジュール、ご希望内容など、詳しくご記入ください..."></textarea>
+                                    </div>
+
+                                    <div class="form-group checkbox-group">
+                                        <label for="biz-agree">
+                                            <input type="checkbox" id="biz-agree" name="利用規約とプライバシーポリシーへの同意"
+                                                value="同意する" required>
+                                            <span><a href="../service/index.html" target="_blank">利用規約</a>および<a
+                                                    href="../privacy/index.html"
+                                                    target="_blank">プライバシーポリシー</a>に同意します</span>
+                                            <span class="required">必須</span>
+                                        </label>
+                                    </div>
+
+                                    <button type="submit" class="submit-btn" id="biz-submit-trigger">
+                                        入力内容を確認する（企業様用）
+                                    </button>
+                                </div>
+
+                                <div class="card-switch-footer">
+                                    <span>個人のお客様ですか？</span>
+                                    <button type="button" class="card-switch-link" id="switch-to-personal">
+                                        個人のお客様向けフォームへ切り替え →
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 2: 個人のお客様 (PERSONAL) -->
+                        <div class="inquiry-panel" id="panel-personal" role="tabpanel" aria-labelledby="tab-personal">
+                            <div class="liquid-card">
+                                <div class="liquid-card-header">
+                                    <div class="liquid-card-badge"
+                                        style="color: #a855f7; background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.25);">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                        </svg>
+                                        Personal & Community
+                                    </div>
+                                    <h3 class="liquid-card-title">個人のお客様 お問い合わせ</h3>
+                                    <p class="liquid-card-desc">動画や記事へのご感想、ご質問、サイトの改善要望やバグ報告などはこちらからお気軽にどうぞ。</p>
+                                </div>
+
+                                <div class="inquiry-form">
+                                    <div class="form-group">
+                                        <label for="pers-name">
+                                            お名前（ニックネーム可）
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <input type="text" id="pers-name" name="お名前" placeholder="例: 山田太郎" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="pers-email">
+                                            メールアドレス
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <input type="email" id="pers-email" name="メールアドレス"
+                                            placeholder="例: you@example.com" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="pers-type">
+                                            お問い合わせの種類
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <select id="pers-type" name="お問い合わせの種類" required>
+                                            <option value="" disabled selected>選択してください</option>
+                                            <option value="動画・コンテンツへのご感想">動画・コンテンツへのご感想</option>
+                                            <option value="ご質問・ご相談">ご質問・ご相談</option>
+                                            <option value="ウェブサイトのバグ報告・改善提案">ウェブサイトのバグ報告・改善提案</option>
+                                            <option value="著作権関係に関するお問合せ">著作権関係に関するお問合せ</option>
+                                            <option value="その他のお問い合わせ">その他のお問い合わせ</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="pers-url">
+                                            関連URL・SNS（任意）
+                                        </label>
+                                        <input type="url" id="pers-url" name="関連するリンクがある場合は入力"
+                                            placeholder="https://x.com/username など">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="pers-message">
+                                            メッセージ・お問い合わせ内容
+                                            <span class="required">必須</span>
+                                        </label>
+                                        <textarea id="pers-message" name="お問い合わせ内容" required
+                                            placeholder="メッセージやご用件をご記入ください..."></textarea>
+                                    </div>
+
+                                    <div class="form-group checkbox-group">
+                                        <label for="pers-agree">
+                                            <input type="checkbox" id="pers-agree" name="利用規約とプライバシーポリシーへの同意"
+                                                value="同意する" required>
+                                            <span><a href="../service/index.html" target="_blank">利用規約</a>および<a
+                                                    href="../privacy/index.html"
+                                                    target="_blank">プライバシーポリシー</a>に同意します</span>
+                                            <span class="required">必須</span>
+                                        </label>
+                                    </div>
+
+                                    <button type="submit" class="submit-btn" id="pers-submit-trigger">
+                                        入力内容を確認する（個人向け）
+                                    </button>
+                                </div>
+
+                                <div class="card-switch-footer">
+                                    <span>企業・法人様のご担当者様ですか？</span>
+                                    <button type="button" class="card-switch-link" id="switch-to-business">
+                                        ← 企業・法人様向けフォームへ切り替え
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <section id="info">
+            <p class="section-title">送信されたお知らせについて</p>
+            <div class="profile-card">
+                <p class="bio-text">
+                    いただきましたお知らせは内容を精査した上で返信が必要なものと判断した場合、<br>info [at] azarin.me より連絡いたします。
+                    <br>
+                    また、迷惑メールフィルター等により、私からのお知らせがお客様の迷惑メールフォルダに振り分けられてしまう可能性も
+                    ございますので、お手数ですがinfo [at] azarin.meからのメールを受信できるように設定をお願いいたします。
+                    <br>
+                    ※全ての連絡に返信できるわけではありません。
+                </p>
+                <br>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <div style="margin-bottom: 10px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <a href="../index.html" style="color: var(--text-muted); text-decoration: none;">トップページ</a>
+                <span style="color: var(--border);">|</span>
+                <a href="../privacy/index.html" style="color: var(--text-muted); text-decoration: none;">プライバシーポリシー</a>
+                <span style="color: var(--border);">|</span>
+                <a href="../site/index.html" style="color: var(--text-muted); text-decoration: none;">サイトマップ</a>
+                <span style="color: var(--border);">|</span>
+                <a href="../link/index.html" style="color: var(--text-muted); text-decoration: none;">各種SNS</a>
+            </div>
+            <p>© 2026 あざりん — All Rights Reserved</p>
+        </footer>
+
+    </div>
+
+    <!-- 送信確認モーダル -->
+    <div id="confirm-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+        <div class="modal-content inquiry-confirm-modal"
+            style="max-width: 600px; width: 94%; margin: auto; background: var(--bg-solid, #13151c); border: 1px solid var(--border2, rgba(255, 255, 255, 0.15)); border-radius: 20px; overflow: hidden;">
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.6rem; border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));">
+                <h2 id="confirm-modal-title" class="modal-title"
+                    style="font-size: 15.5px; font-weight: 700; color: var(--text, #f8fafc); margin: 0;">入力内容の確認</h2>
+                <button id="confirm-close" class="modal-close-btn" aria-label="閉じる" type="button">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body confirm-modal-body"
+                style="padding: 1.5rem 1.6rem; overflow-y: auto; max-height: calc(85dvh - 130px); background: var(--bg-solid, #13151c);">
+                <p class="confirm-intro-text"
+                    style="font-size: 13.5px; color: var(--text-secondary, rgba(248, 250, 252, 0.65)); margin-bottom: 1.4rem; line-height: 1.6;">
+                    以下の内容で送信します。内容に誤りがないかご確認の上、「送信する」ボタンを押してください。
+                </p>
+
+                <div class="confirm-preview-list" style="display: flex; flex-direction: column; gap: 1.2rem;">
+                    <!-- お問い合わせ区分 -->
+                    <div class="confirm-item" id="preview-category-row"
+                        style="display: flex; flex-direction: column; gap: 6px;">
+                        <span class="confirm-label"
+                            style="font-size: 11px; font-weight: 700; color: var(--accent, #0071e3); letter-spacing: 0.05em; text-transform: uppercase;">お問い合わせ区分</span>
+                        <div id="preview-category" class="confirm-value"
+                            style="font-size: 14.5px; color: var(--text, #f8fafc); background: var(--bg3, rgba(32, 36, 50, 0.6)); padding: 11px 15px; border-radius: 10px; border: 1px solid var(--border, rgba(255, 255, 255, 0.08)); font-weight: 600;">
+                        </div>
+                    </div>
+
+                    <!-- 企業用: 貴社名 -->
+                    <div class="confirm-item" id="preview-biz-company-row"
+                        style="display: flex; flex-direction: column; gap: 6px;">
+                        <span class="confirm-label"
+                            style="font-size: 11px; font-weight: 700; color: var(--accent, #0071e3); letter-spacing: 0.05em; text-transform: uppercase;">貴社名・組織名</span>
+                        <div id="preview-biz-company" class="confirm-value"
+                            style="font-size: 14.5px; color: var(--text, #f8fafc); background: var(--bg3, rgba(32, 36, 50, 0.6)); padding: 11px 15px; border-radius: 10px; border: 1px solid var(--border, rgba(255, 255, 255, 0.08)); overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">
+                        </div>
+                    </div>
+
+                    <!-- 企業用: 担当者名 / 個人用: お名前 -->
+                    <div class="confirm-item" id="preview-name-row"
+                        style="display: flex; flex-direction: column; gap: 6px;">
+                        <span class="confirm-label" id="preview-name-label"
+                            style="font-size: 11px; font-weight: 700; color: var(--accent, #0071e3); letter-spacing: 0.05em; text-transform: uppercase;">お名前
+                            / ご担当者名</span>
+                        <div id="preview-name" class="confirm-value"
+                            style="font-size: 14.5px; color: var(--text, #f8fafc); background: var(--bg3, rgba(32, 36, 50, 0.6)); padding: 11px 15px; border-radius: 10px; border: 1px solid var(--border, rgba(255, 255, 255, 0.08)); overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">
+                        </div>
+                    </div>
+
+                    <!-- メールアドレス -->
+                    <div class="confirm-item" id="preview-email-row"
+                        style="display: flex; flex-direction: column; gap: 6px;">
+                        <span class="confirm-label"
+                            style="font-size: 11px; font-weight: 700; color: var(--accent, #0071e3); letter-spacing: 0.05em; text-transform: uppercase;">メールアドレス</span>
+                        <div id="preview-email" class="confirm-value"
+                            style="font-size: 14.5px; color: var(--text, #f8fafc); background: var(--bg3, rgba(32, 36, 50, 0.6)); padding: 11px 15px; border-radius: 10px; border: 1px solid var(--border, rgba(255, 255, 255, 0.08)); overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">
+                        </div>
+                    </div>
+
+                    <!-- お問い合わせ・ご相談の種類 -->
+                    <div class="confirm-item" id="preview-type-row"
+                        style="display: flex; flex-direction: column; gap: 6px;">
+                        <span class="confirm-label"
+                            style="font-size: 11px; font-weight: 700; color: var(--accent, #0071e3); letter-spacing: 0.05em; text-transform: uppercase;">ご相談・お問い合わせの種類</span>
+                        <div id="preview-type" class="confirm-value"
+                            style="font-size: 14.5px; color: var(--text, #f8fafc); background: var(--bg3, rgba(32, 36, 50, 0.6)); padding: 11px 15px; border-radius: 10px; border: 1px solid var(--border, rgba(255, 255, 255, 0.08)); overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">
+                        </div>
+                    </div>
+
+                    <!-- 企業用: URL / 個人用: URL -->
+                    <div class="confirm-item" id="preview-url-row"
+                        style="display: flex; flex-direction: column; gap: 6px;">
+                        <span class="confirm-label" id="preview-url-label"
+                            style="font-size: 11px; font-weight: 700; color: var(--accent, #0071e3); letter-spacing: 0.05em; text-transform: uppercase;">関連URL
+                            / 貴社サイト</span>
+                        <div id="preview-url" class="confirm-value"
+                            style="font-size: 14.5px; color: var(--text, #f8fafc); background: var(--bg3, rgba(32, 36, 50, 0.6)); padding: 11px 15px; border-radius: 10px; border: 1px solid var(--border, rgba(255, 255, 255, 0.08)); overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">
+                        </div>
+                    </div>
+
+                    <!-- 企業用: ご予算・納期 -->
+                    <div class="confirm-item" id="preview-biz-budget-row"
+                        style="display: flex; flex-direction: column; gap: 6px;">
+                        <span class="confirm-label"
+                            style="font-size: 11px; font-weight: 700; color: var(--accent, #0071e3); letter-spacing: 0.05em; text-transform: uppercase;">ご予算感・希望納期</span>
+                        <div id="preview-biz-budget" class="confirm-value"
+                            style="font-size: 14.5px; color: var(--text, #f8fafc); background: var(--bg3, rgba(32, 36, 50, 0.6)); padding: 11px 15px; border-radius: 10px; border: 1px solid var(--border, rgba(255, 255, 255, 0.08)); overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">
+                        </div>
+                    </div>
+
+                    <!-- お問い合わせ内容 -->
+                    <div class="confirm-item" id="preview-message-row"
+                        style="display: flex; flex-direction: column; gap: 6px;">
+                        <span class="confirm-label"
+                            style="font-size: 11px; font-weight: 700; color: var(--accent, #0071e3); letter-spacing: 0.05em; text-transform: uppercase;">お問い合わせ内容</span>
+                        <div id="preview-message" class="confirm-value preview-message-box"
+                            style="font-size: 14.5px; color: var(--text, #f8fafc); background: var(--bg3, rgba(32, 36, 50, 0.6)); padding: 11px 15px; border-radius: 10px; border: 1px solid var(--border, rgba(255, 255, 255, 0.08)); min-height: 100px; max-height: 200px; overflow-y: auto; overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer confirm-modal-footer"
+                style="padding: 1.15rem 1.6rem; border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08)); display: flex; gap: 12px; justify-content: flex-end; background: var(--bg-solid, #13151c);">
+                <button id="confirm-cancel" class="modal-btn" type="button"
+                    style="padding: 10px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer;">戻って修正する</button>
+                <button id="confirm-submit" class="modal-btn primary" type="button"
+                    style="padding: 10px 24px; font-size: 13.5px; font-weight: 600; cursor: pointer;">送信する</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script src="../script.js?v=20260910c"></script>
+    <script src="script.js?v=20260910c"></script>
+</body>
+
+</html>

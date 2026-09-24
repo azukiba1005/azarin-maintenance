@@ -71,14 +71,6 @@
         </a>
 
         <div class="nav-actions">
-          <!-- お問い合わせリンク -->
-          <a href="inquiry/index.html" class="nav-inquiry-btn" title="お問い合わせフォームを開く">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <span>お問い合わせ</span>
-          </a>
-
           <!-- テーマ切り替えボタン -->
           <button type="button" id="theme-toggle-btn" class="theme-btn" aria-label="ダーク/ライトモード切り替え" title="テーマ切り替え">
             <svg class="sun-icon" viewBox="0 0 24 24">
@@ -176,39 +168,30 @@
             </svg>
           </div>
           <div class="contact-text-wrap">
-            <div class="contact-title-row">
-              <h3 id="contact-title">お仕事・コラボ等のご連絡</h3>
-              <span class="contact-badge">企業・個人対応</span>
-            </div>
-            <p id="contact-desc">リニューアル工事中も、製品レビュー・PRタイアップ・取材等のご依頼やお問い合わせは通常通り受け付けております。専用のWebフォーム、または下記メールアドレスよりお気軽にご連絡ください。</p>
+            <h3 id="contact-title">お仕事・コラボ等のご連絡</h3>
+            <p id="contact-desc">リニューアル工事中も、製品レビュー・タイアップ・取材等のご依頼は通常通り受け付けております。下記アドレスまでお気軽にご連絡ください。</p>
           </div>
         </div>
 
         <div class="contact-action-box">
           <div class="contact-email-text">
-            <span class="email-icon">✉️</span>
+            <span>✉️</span>
             <span id="contact-email">azarin_official@yahoo.co.jp</span>
           </div>
           <div class="contact-btn-group">
-            <a href="inquiry/index.html" class="btn btn-primary" id="contact-form-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span>Webフォームでお問い合わせ</span>
-            </a>
             <button type="button" class="btn btn-secondary" id="copy-email-btn" title="メールアドレスをコピー">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
                 <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
               </svg>
-              <span>アドレスをコピー</span>
+              アドレスをコピー
             </button>
-            <a href="mailto:azarin_official@yahoo.co.jp" class="btn btn-secondary" id="contact-email-btn" title="メーラーを開く">
+            <a href="mailto:azarin_official@yahoo.co.jp" class="btn btn-primary" id="contact-email-btn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
-              <span>メーラー起動</span>
+              メーラーを開く
             </a>
           </div>
         </div>
@@ -238,10 +221,22 @@
         <span class="footer-divider">/</span>
         <a href="https://note.com/azukiba10051127" target="_blank" rel="noopener noreferrer" class="footer-link">note</a>
         <span class="footer-divider">/</span>
-        <a href="inquiry/index.html" class="footer-link footer-inquiry-link">お問い合わせ</a>
+        <a href="mailto:azarin_official@yahoo.co.jp" class="footer-link">Contact</a>
       </div>
       <p class="footer-copy">© 2026 AZARIN All Rights Reserved</p>
+
+      <!-- 管理画面への控えめなリンク -->
+      <div style="margin-top: 1.25rem;">
+        <a href="admin.html" class="admin-access-btn" title="管理者用設定パネル">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          管理者設定 (Admin)
+        </a>
+      </div>
     </footer>
+
   </div>
 
   <!-- コピー完了トースト -->

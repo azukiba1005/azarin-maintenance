@@ -76,12 +76,15 @@
         const titleEl = document.getElementById('contact-title');
         const descEl = document.getElementById('contact-desc');
         const emailEl = document.getElementById('contact-email');
-        const emailBtn = document.getElementById('contact-email-btn');
+        const formBtn = document.getElementById('contact-form-btn');
 
         if (titleEl) titleEl.textContent = config.contact.title || 'お仕事・コラボ等のご連絡';
         if (descEl) descEl.textContent = config.contact.description || '';
         if (emailEl) emailEl.textContent = config.contact.email || 'azarin_official@yahoo.co.jp';
         if (emailBtn) emailBtn.href = `mailto:${config.contact.email || 'azarin_official@yahoo.co.jp'}`;
+        if (formBtn && config.contact?.formUrl) {
+          formBtn.href = config.contact.formUrl;
+        }
       } else {
         contactCard.style.display = 'none';
       }

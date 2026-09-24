@@ -35,9 +35,9 @@ window.DEFAULT_SITE_CONFIG = {
   "contact": {
     "enabled": true,
     "title": "お仕事・コラボ等のご連絡",
-    "description": "リニューアル工事中も、製品レビュー・タイアップ・取材等のご依頼は通常通り受け付けております。下記アドレスまでお気軽にご連絡ください。",
+    "description": "リニューアル工事中も、製品レビュー・PRタイアップ・取材等のご依頼やお問い合わせは通常通り受け付けております。専用のWebフォーム、または下記メールアドレスよりお気軽にご連絡ください。",
     "email": "azarin_official@yahoo.co.jp",
-    "formUrl": ""
+    "formUrl": "inquiry/index.html"
   },
   "links": [
     {
