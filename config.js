@@ -1,10 +1,10 @@
 /**
  * azarin.me 工事中案内 サイト設定ファイル (Exported Config)
- * 生成日時: 2026/9/23 19:22:27
+ * 生成日時: 2026/9/26 23:17:49
  */
 window.DEFAULT_SITE_CONFIG = {
   "site": {
-    "title": "あざりん | サイトリニューアル工事中 (テスト中)",
+    "title": "あざりん | サイトリニューアル工事中",
     "brandName": "AZARIN",
     "brandSub": "@azarin · YouTube Creator",
     "avatarInitial": "あ",
@@ -19,25 +19,25 @@ window.DEFAULT_SITE_CONFIG = {
     "isActive": true,
     "badgeText": "UNDER CONSTRUCTION · リニューアル工事中 ",
     "badgeType": "warning",
-    "heading": "リニューアル工事の画面を作成中です。実際にはこのようなリニューアル工事はしておりません",
+    "heading": "ウェブサイトのメイン画面を変更しようとしています...",
     "description": "いつも「あざりん」を応援いただきありがとうございます。\n現在、より見やすく、快適に最新ガジェット情報やコンテンツをお届けできるよう、全面的なシステムおよびデザインのリニューアルを実施しております。\n公開まで今しばらくお待ちくださいますようお願い申し上げます。",
     "showProgress": true,
-    "progressPercent": 78,
-    "progressLabel": "リニューアル進捗状況 (UIデザイン実装・機能移行中)"
+    "progressPercent": 10,
+    "progressLabel": "リニューアル進捗状況 (ウェブサイトを確認中....)"
   },
   "countdown": {
     "enabled": true,
     "label": "REOPENING COUNTDOWN",
     "subLabel": "リニューアル公開予定",
-    "targetDate": "2026-10-14T06:00:00.000Z",
+    "targetDate": "2026-10-13T21:00:00.000Z",
     "expiredMessage": "まもなく公開予定です！最新情報はSNSでお知らせします。"
   },
   "contact": {
     "enabled": true,
     "title": "お仕事・コラボ等のご連絡",
-    "description": "リニューアル工事中も、製品レビュー・PRタイアップ・取材等のご依頼やお問い合わせは通常通り受け付けております。専用のWebフォーム、または下記メールアドレスよりお気軽にご連絡ください。",
+    "description": "リニューアル工事中も、製品レビュー・タイアップ・取材等のご依頼は通常通り受け付けております。下記アドレスまでお気軽にご連絡ください。",
     "email": "azarin_official@yahoo.co.jp",
-    "formUrl": "inquiry/index.html"
+    "formUrl": ""
   },
   "links": [
     {
