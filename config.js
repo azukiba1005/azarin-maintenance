@@ -1,6 +1,6 @@
 /**
  * azarin.me 工事中案内 サイト設定ファイル (Exported Config)
- * 生成日時: 2026/9/26 23:20:02
+ * 生成日時: 2026/9/26 23:22:03
  */
 window.DEFAULT_SITE_CONFIG = {
   "site": {
@@ -26,11 +26,10 @@ window.DEFAULT_SITE_CONFIG = {
     "progressLabel": "リニューアル進捗状況 (ウェブサイトを確認中....)"
   },
   "countdown": {
-    "enabled": true,
-    "mode": "countdown",
+    "enabled": false,
     "label": "REOPENING COUNTDOWN",
     "subLabel": "リニューアル公開予定",
-    "targetDate": "2026-10-13T21:00:00.000Z",
+    "targetDate": "2026-10-13T12:00:00.000Z",
     "expiredMessage": "まもなく公開予定です！最新情報はSNSでお知らせします。"
   },
   "contact": {
