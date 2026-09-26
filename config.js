@@ -27,6 +27,7 @@ window.DEFAULT_SITE_CONFIG = {
   },
   "countdown": {
     "enabled": true,
+    "mode": "countdown",
     "label": "REOPENING COUNTDOWN",
     "subLabel": "リニューアル公開予定",
     "targetDate": "2026-10-13T21:00:00.000Z",

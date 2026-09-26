@@ -126,7 +126,7 @@
     }).join('');
   }
 
-  // 4. カウントダウンタイマー処理
+  // 4. カウントダウン / カウントアップ タイマー処理
   let countdownInterval = null;
   function initCountdown() {
     const card = document.getElementById('countdown-card');
@@ -137,13 +137,19 @@
       return;
     }
 
+    const mode = config.countdown.mode === 'countup' ? 'countup' : 'countdown';
+
     card.style.display = 'block';
     const labelEl = document.getElementById('countdown-label');
     const subLabelEl = document.getElementById('countdown-sublabel');
-    if (labelEl) labelEl.textContent = config.countdown.label || 'REOPENING COUNTDOWN';
-    if (subLabelEl) subLabelEl.textContent = config.countdown.subLabel || 'リニューアル公開予定';
 
-    const targetTime = new Date(config.countdown.targetDate).getTime();
+    // モードごとのデフォルトラベル
+    const defaultLabel = mode === 'countup' ? 'ELAPSED TIME' : 'REOPENING COUNTDOWN';
+    const defaultSubLabel = mode === 'countup' ? '経過時間' : 'リニューアル公開予定';
+    if (labelEl) labelEl.textContent = config.countdown.label || defaultLabel;
+    if (subLabelEl) subLabelEl.textContent = config.countdown.subLabel || defaultSubLabel;
+
+    const baseTime = new Date(config.countdown.targetDate).getTime();
     const daysEl = document.getElementById('time-days');
     const hoursEl = document.getElementById('time-hours');
     const minsEl = document.getElementById('time-minutes');
@@ -155,30 +161,61 @@
 
     function update() {
       const now = new Date().getTime();
-      const distance = targetTime - now;
 
-      if (distance < 0) {
-        if (timerGrid) timerGrid.style.display = 'none';
-        if (expiredEl) {
-          expiredEl.style.display = 'block';
-          expiredEl.textContent = config.countdown.expiredMessage || 'まもなく公開予定です！';
+      if (mode === 'countup') {
+        // カウントアップ: baseTime を起算日として経過時間を表示
+        const elapsed = now - baseTime;
+
+        if (elapsed < 0) {
+          // まだ開始前
+          if (timerGrid) timerGrid.style.display = 'none';
+          if (expiredEl) {
+            expiredEl.style.display = 'block';
+            expiredEl.textContent = config.countdown.expiredMessage || 'まもなく開始予定です！';
+          }
+          return;
         }
-        clearInterval(countdownInterval);
-        return;
+
+        if (timerGrid) timerGrid.style.display = 'flex';
+        if (expiredEl) expiredEl.style.display = 'none';
+
+        const days    = Math.floor(elapsed / (1000 * 60 * 60 * 24));
+        const hours   = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+        if (minsEl) minsEl.textContent = String(minutes).padStart(2, '0');
+        if (secsEl) secsEl.textContent = String(seconds).padStart(2, '0');
+
+      } else {
+        // カウントダウン: baseTime までの残り時間を表示
+        const distance = baseTime - now;
+
+        if (distance < 0) {
+          if (timerGrid) timerGrid.style.display = 'none';
+          if (expiredEl) {
+            expiredEl.style.display = 'block';
+            expiredEl.textContent = config.countdown.expiredMessage || 'まもなく公開予定です！';
+          }
+          clearInterval(countdownInterval);
+          return;
+        }
+
+        if (timerGrid) timerGrid.style.display = 'flex';
+        if (expiredEl) expiredEl.style.display = 'none';
+
+        const days    = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours   = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+        if (minsEl) minsEl.textContent = String(minutes).padStart(2, '0');
+        if (secsEl) secsEl.textContent = String(seconds).padStart(2, '0');
       }
-
-      if (timerGrid) timerGrid.style.display = 'flex';
-      if (expiredEl) expiredEl.style.display = 'none';
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
-      if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
-      if (minsEl) minsEl.textContent = String(minutes).padStart(2, '0');
-      if (secsEl) secsEl.textContent = String(seconds).padStart(2, '0');
     }
 
     update();

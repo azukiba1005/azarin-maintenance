@@ -197,9 +197,24 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="input-countdown-date">公開予定日時 (Target Date)</label>
+          <label class="form-label">タイマーモード</label>
+          <div style="display: flex; gap: 1rem; margin-top: 0.25rem;">
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="radio" id="radio-countdown-mode-countdown" name="countdown-mode" value="countdown">
+              <span>⏳ カウントダウン（目標日まで残り時間）</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="radio" id="radio-countdown-mode-countup" name="countdown-mode" value="countup">
+              <span>⏱️ カウントアップ（起算日からの経過時間）</span>
+            </label>
+          </div>
+          <p class="form-hint" id="countdown-mode-hint">指定した日時に向けて残り時間を表示します。</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-countdown-date" id="label-countdown-date">公開予定日時 (Target Date)</label>
           <input type="datetime-local" id="input-countdown-date" class="form-input">
-          <p class="form-hint">指定した日時に向けて日・時・分・秒がリアルタイムで減算されます。</p>
+          <p class="form-hint" id="hint-countdown-date">指定した日時に向けて日・時・分・秒がリアルタイムで減算されます。</p>
         </div>
 
         <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">

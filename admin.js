@@ -73,6 +73,11 @@
 
     // カウントダウン
     setChecked('check-countdown-enable', currentConfig.countdown?.enabled);
+    // モード選択ラジオボタン
+    const mode = currentConfig.countdown?.mode || 'countdown';
+    const modeRadio = document.querySelector(`input[name="countdown-mode"][value="${mode}"]`);
+    if (modeRadio) modeRadio.checked = true;
+    updateCountdownModeUI(mode);
     setVal('input-countdown-label', currentConfig.countdown?.label);
     setVal('input-countdown-sublabel', currentConfig.countdown?.subLabel);
     
@@ -103,6 +108,23 @@
 
     // リンク一覧の描画
     renderLinkEditors();
+  }
+
+  // カウントモードUI更新（ラベル・ヒントテキストの切り替え）
+  function updateCountdownModeUI(mode) {
+    const labelEl = document.getElementById('label-countdown-date');
+    const hintEl  = document.getElementById('hint-countdown-date');
+    const modeHint = document.getElementById('countdown-mode-hint');
+
+    if (mode === 'countup') {
+      if (labelEl) labelEl.textContent = '起算日時 (Start Date)';
+      if (hintEl)  hintEl.textContent  = '指定した日時からの経過時間（日・時・分・秒）をリアルタイムで加算表示します。';
+      if (modeHint) modeHint.textContent = '指定した日時を起点として経過時間を表示します。';
+    } else {
+      if (labelEl) labelEl.textContent = '公開予定日時 (Target Date)';
+      if (hintEl)  hintEl.textContent  = '指定した日時に向けて日・時・分・秒がリアルタイムで減算されます。';
+      if (modeHint) modeHint.textContent = '指定した日時に向けて残り時間を表示します。';
+    }
   }
 
   function setVal(id, val) {
@@ -216,6 +238,8 @@
     // カウントダウン
     currentConfig.countdown = currentConfig.countdown || {};
     currentConfig.countdown.enabled = getChecked('check-countdown-enable');
+    const selectedMode = document.querySelector('input[name="countdown-mode"]:checked');
+    currentConfig.countdown.mode = selectedMode ? selectedMode.value : 'countdown';
     currentConfig.countdown.label = getVal('input-countdown-label');
     currentConfig.countdown.subLabel = getVal('input-countdown-sublabel');
     const dateVal = getVal('input-countdown-date');
@@ -315,6 +339,15 @@
     // 全てのinput変更で自動同期
     document.querySelectorAll('.admin-editor input, .admin-editor textarea, .admin-editor select').forEach(el => {
       el.addEventListener('input', () => {
+        collectFormData();
+        syncPreview();
+      });
+    });
+
+    // カウントモード切り替え時のUIラベル更新
+    document.querySelectorAll('input[name="countdown-mode"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        updateCountdownModeUI(radio.value);
         collectFormData();
         syncPreview();
       });
