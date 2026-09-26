@@ -1,6 +1,6 @@
 /**
  * azarin.me 工事中案内 サイト設定ファイル (Exported Config)
- * 生成日時: 2026/9/26 23:17:49
+ * 生成日時: 2026/9/26 23:20:02
  */
 window.DEFAULT_SITE_CONFIG = {
   "site": {
