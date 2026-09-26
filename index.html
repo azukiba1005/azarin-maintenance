@@ -51,6 +51,7 @@
 
   <!-- 背景アンビエントライティング & グリッド -->
   <div class="bg-ambient">
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
     <div class="ambient-blob blob-1"></div>
     <div class="ambient-blob blob-2"></div>
     <div class="ambient-blob blob-3"></div>
@@ -150,14 +151,17 @@
             <span class="time-num" id="time-days">--</span>
             <span class="time-unit">DAYS</span>
           </div>
+          <span class="time-sep" aria-hidden="true">:</span>
           <div class="time-box">
             <span class="time-num" id="time-hours">--</span>
             <span class="time-unit">HOURS</span>
           </div>
+          <span class="time-sep" aria-hidden="true">:</span>
           <div class="time-box">
             <span class="time-num" id="time-minutes">--</span>
             <span class="time-unit">MINS</span>
           </div>
+          <span class="time-sep" aria-hidden="true">:</span>
           <div class="time-box">
             <span class="time-num" id="time-seconds">--</span>
             <span class="time-unit">SECS</span>
@@ -255,6 +259,78 @@
   <!-- 設定 ＆ スクリプト読み込み -->
   <script src="config.js"></script>
   <script src="script.js"></script>
+
+  <!-- パーティクル背景 & ナビスクロール演出 -->
+  <script>
+  (function() {
+    /* ---- Particle Canvas ---- */
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W, H, particles = [];
+    var COLORS = ['rgba(56,189,248,', 'rgba(99,102,241,', 'rgba(245,158,11,'];
+    var COUNT = 55;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function rand(a, b) { return Math.random() * (b - a) + a; }
+
+    function createParticle() {
+      var c = COLORS[Math.floor(Math.random() * COLORS.length)];
+      return {
+        x: rand(0, W), y: rand(0, H),
+        r: rand(0.5, 1.8),
+        vx: rand(-0.18, 0.18), vy: rand(-0.22, 0.10),
+        alpha: rand(0.15, 0.55),
+        da: rand(-0.003, 0.003),
+        color: c
+      };
+    }
+
+    function init() {
+      particles = [];
+      for (var i = 0; i < COUNT; i++) particles.push(createParticle());
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        p.alpha += p.da;
+        if (p.alpha < 0.08) p.da = Math.abs(p.da);
+        if (p.alpha > 0.6)  p.da = -Math.abs(p.da);
+        if (p.x < -5) p.x = W + 5;
+        if (p.x > W + 5) p.x = -5;
+        if (p.y < -5) p.y = H + 5;
+        if (p.y > H + 5) p.y = -5;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + p.alpha + ')';
+        ctx.fill();
+      }
+      requestAnimationFrame(step);
+    }
+
+    window.addEventListener('resize', function() { resize(); init(); });
+    resize(); init(); step();
+
+    /* ---- Navbar scroll effect ---- */
+    var nav = document.querySelector('.site-nav');
+    if (nav) {
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 30) {
+          nav.style.boxShadow = '0 8px 28px -4px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.09)';
+        } else {
+          nav.style.boxShadow = '';
+        }
+      }, { passive: true });
+    }
+  })();
+  </script>
 </body>
 
 </html>

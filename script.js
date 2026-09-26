@@ -167,7 +167,7 @@
         return;
       }
 
-      if (timerGrid) timerGrid.style.display = 'grid';
+      if (timerGrid) timerGrid.style.display = 'flex';
       if (expiredEl) expiredEl.style.display = 'none';
 
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
